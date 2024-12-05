@@ -35,7 +35,7 @@ jobs:
         languages: csharp
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v2
 
     - name: Publish project
       run: dotnet publish VeeamHealthCheck.csproj -c Release -o ./publish
@@ -49,7 +49,7 @@ jobs:
 
   release:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
