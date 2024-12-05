@@ -2,8 +2,7 @@ name: Release Workflow
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "master", "dev" ]
 
 jobs:
   build:
