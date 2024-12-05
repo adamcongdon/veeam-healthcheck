@@ -22,11 +22,11 @@ jobs:
       working-directory: vHC/HC_Reporting
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build VeeamHealthCheck.csproj --configuration Release --no-restore
       working-directory: vHC/HC_Reporting
 
     - name: Run tests
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test VeeamHealthCheck.csproj --no-restore --verbosity normal
       working-directory: vHC/HC_Reporting
 
     - name: Code scan
@@ -38,7 +38,7 @@ jobs:
       uses: github/codeql-action/analyze@v1
 
     - name: Publish project
-      run: dotnet publish -c Release -o ./publish
+      run: dotnet publish VeeamHealthCheck.csproj -c Release -o ./publish
       working-directory: vHC/HC_Reporting
 
     - name: Zip published files
