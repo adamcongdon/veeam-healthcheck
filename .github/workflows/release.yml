@@ -71,6 +71,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: VeeamHealthCheck-*.zip
+        asset_path: D:\a\veeam-healthcheck\veeam-healthcheck\vHC\HC_Reporting\publish\
         asset_name: VeeamHealthCheck.zip
         asset_content_type: application/zip
