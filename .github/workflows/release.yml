@@ -17,17 +17,17 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Change directory to project folder
-      run: cd vHC/HC_Reporting
-
     - name: Restore dependencies
       run: dotnet restore
+      working-directory: vHC/HC_Reporting
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
+      working-directory: vHC/HC_Reporting
 
     - name: Run tests
       run: dotnet test --no-restore --verbosity normal
+      working-directory: vHC/HC_Reporting
 
     - name: Code scan
       uses: github/codeql-action/init@v1
@@ -61,6 +61,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: bin/Release/net8.0/your-binary-file.dll
+        asset_path: vHC/HC_Reporting/bin/Release/net8.0/your-binary-file.dll
         asset_name: VeeamHealthCheck.exe
         asset_content_type: application/octet-stream
