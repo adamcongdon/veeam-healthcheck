@@ -43,8 +43,9 @@ jobs:
 
     - name: Zip published files
       run: |
-        $version = (Get-Command ./publish/VeeamHealthCheck.exe).FileVersionInfo.FileVersion
-        Compress-Archive -Path ./publish/* -DestinationPath ./VeeamHealthCheck-$version.zip
+        $version = (Get-Command D:\a\veeam-healthcheck\veeam-healthcheck\vHC\HC_Reporting\publish\VeeamHealthCheck.exe).FileVersionInfo.FileVersion
+        Write-Host("Version: $version")
+        Compress-Archive -Path D:\a\veeam-healthcheck\veeam-healthcheck\vHC\HC_Reporting\publish\* -DestinationPath ./VeeamHealthCheck-$version.zip
       shell: pwsh
 
   release:
