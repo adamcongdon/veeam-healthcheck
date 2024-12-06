@@ -74,6 +74,7 @@ jobs:
             Write-Host "Failed to get upload URL from VirusTotal."
             exit 1
         }
+        Write-Host("Upload URL Response: " + $uploadUrlResponse)
         $uploadUrl = $uploadUrlResponse.upload_url
         if ([string]::IsNullOrEmpty($uploadUrl)) {
             Write-Host "Upload URL is null or empty."
