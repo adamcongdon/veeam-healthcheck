@@ -61,8 +61,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: $version
-        release_name: Release $version
+        tag_name: v1.0.${{ github.run_number }}
+        release_name: Release v1.0.${{ github.run_number }}
         draft: false
         prerelease: false
 
@@ -72,6 +72,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: D:\a\veeam-healthcheck\veeam-healthcheck\vHC\HC_Reporting\publish\
+        asset_path: vHC/HC_Reporting/VeeamHealthCheck-*.zip
         asset_name: VeeamHealthCheck.zip
         asset_content_type: application/zip
