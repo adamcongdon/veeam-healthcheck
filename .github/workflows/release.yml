@@ -84,7 +84,7 @@ jobs:
         $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -InFile $file -ContentType "multipart/form-data"
         
         echo "::set-output name=scan_id::$(echo $response.data.id)"
-    shell: pwsh
+      shell: pwsh
 
     - name: Check VirusTotal Scan Results
       run: |
