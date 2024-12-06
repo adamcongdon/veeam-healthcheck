@@ -86,7 +86,7 @@ jobs:
         $form = @{
           file = Get-Item $file
         }
-        $response = Invoke-WebRequest -Uri $uploadUrl -Method Post -Form $form -Headers @{ "x-apikey" = $apiKey }
+        $response = Invoke-WebRequest -Uri $uploadUrl -Method Post -Form $form -Headers @{ "x-apikey" = $apiKey } -ContentType "multipart/form-data"
         
         $responseContent = $response.Content | ConvertFrom-Json
         echo "::set-output name=scan_id::$(echo $responseContent.data.id)"
