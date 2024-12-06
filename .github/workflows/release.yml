@@ -70,6 +70,22 @@ jobs:
 
       shell: pwsh
 
+    - name: Upload to VirusTotal
+      id: virustotal_scan
+      run: |
+        $file = "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
+        $apiKey = "${{ secrets.VIRUSTOTAL_API_KEY }}"
+        $response = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/files" -Method Post -Headers @{ "x-apikey" = $apiKey } -InFile $file -ContentType "multipart/form-data"
+        echo "::set-output name=scan_id::$(echo $response.data.id)"
+      shell: pwsh
+    - name: Check VirusTotal Scan Results
+      run: |
+        $scanId = "${{ steps.virustotal_scan.outputs.scan_id }}"
+        $apiKey = "${{ secrets.VIRUSTOTAL_API_KEY }}"
+        $response = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/analyses/$scanId" -Method Get -Headers @{ "x-apikey" = $apiKey }
+        Write-Host "Scan Results: $($response.data.attributes.stats)"
+      shell: pwsh
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
