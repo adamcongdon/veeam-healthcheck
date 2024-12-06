@@ -48,13 +48,6 @@ jobs:
         Compress-Archive -Path D:\a\veeam-healthcheck\veeam-healthcheck\vHC\HC_Reporting\publish\* -DestinationPath ./VeeamHealthCheck-$version.zip
       shell: pwsh
 
-  release:
-    needs: build
-    runs-on: windows-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -75,3 +68,4 @@ jobs:
         asset_path: vHC/HC_Reporting/VeeamHealthCheck-*.zip
         asset_name: VeeamHealthCheck.zip
         asset_content_type: application/zip
+
