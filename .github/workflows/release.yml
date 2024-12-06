@@ -1,8 +1,11 @@
 name: Release Workflow
 
 on:
-  push:
-    branches: [ "master", "dev" ]
+    push:
+        branches: [ "master", "dev" ]
+    pull_request:
+        # The branches below must be a subset of the branches above
+        branches: [ "master" ]
 
 jobs:
   build:
@@ -89,3 +92,13 @@ jobs:
         asset_path: D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip
         asset_name: VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip
         asset_content_type: application/zip
+    
+    - name: Upload Release Asset (SHA256)
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip.sha256
+        asset_name: VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip.sha256
+        asset_content_type: text/plain
