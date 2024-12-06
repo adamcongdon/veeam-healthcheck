@@ -86,7 +86,7 @@ jobs:
         $form = @{
           file = Get-Item $file
         }
-        $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -Headers @{ "x-apikey" = $apiKey } -Form $form
+        $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -Form $form
         
         echo "::set-output name=scan_id::$(echo $response.data.id)"
       shell: pwsh
