@@ -63,6 +63,10 @@ jobs:
         Compress-Archive -Path D:\a\veeam-healthcheck\veeam-healthcheck\vHC\HC_Reporting\publish\* -DestinationPath D:\a\publish\VeeamHealthCheck-$version.zip
         gci D:\a\publish
         echo "::set-output name=version::$version"
+        $hash = Get-FileHash -Path D:\a\publish\VeeamHealthCheck-$version.zip -Algorithm SHA256
+        $hash | Out-File -FilePath "D:\a\publish\VeeamHealthCheck-$version.zip.sha256"
+        $hash
+
       shell: pwsh
 
     - name: Create Release
@@ -75,7 +79,7 @@ jobs:
         release_name: Release v1.0.${{ github.run_number }}
         draft: false
         prerelease: false
-        
+
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
