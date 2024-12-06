@@ -70,15 +70,16 @@ jobs:
         
         # Get the upload URL
         $uploadUrlResponse = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/files/upload_url" -Method Get -Headers @{ "x-apikey" = $apiKey }
+        Write-Host "Upload URL Response: $uploadUrlResponse"
         if ($uploadUrlResponse -eq $null) {
-            Write-Host "Failed to get upload URL from VirusTotal."
-            exit 1
+          Write-Host "Failed to get upload URL from VirusTotal."
+          exit 1
         }
-        Write-Host("Upload URL Response: " + $uploadUrlResponse)
-        $uploadUrl = $uploadUrlResponse.upload_url
+        $uploadUrl = $uploadUrlResponse.data
+        Write-Host "Upload URL: $uploadUrl"
         if ([string]::IsNullOrEmpty($uploadUrl)) {
-            Write-Host "Upload URL is null or empty."
-            exit 1
+          Write-Host "Upload URL is null or empty."
+          exit 1
         }
         
         # Upload the file using the obtained URL
