@@ -30,14 +30,6 @@ jobs:
       run: dotnet test VeeamHealthCheck.csproj --no-restore --verbosity normal
       working-directory: vHC/HC_Reporting
 
-    # - name: Code scan
-    #   uses: github/codeql-action/init@v1
-    #   with:
-    #     languages: csharp
-
-    # - name: Perform CodeQL Analysis
-    #   uses: github/codeql-action/analyze@v2
-
 
 
   release:
@@ -78,13 +70,21 @@ jobs:
         
         # Get the upload URL
         $uploadUrlResponse = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/files/upload_url" -Method Get -Headers @{ "x-apikey" = $apiKey }
+        if ($uploadUrlResponse -eq $null) {
+            Write-Host "Failed to get upload URL from VirusTotal."
+            exit 1
+        }
         $uploadUrl = $uploadUrlResponse.upload_url
+        if ([string]::IsNullOrEmpty($uploadUrl)) {
+            Write-Host "Upload URL is null or empty."
+            exit 1
+        }
         
         # Upload the file using the obtained URL
         $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -InFile $file -ContentType "multipart/form-data"
         
         echo "::set-output name=scan_id::$(echo $response.data.id)"
-      shell: pwsh
+    shell: pwsh
 
     - name: Check VirusTotal Scan Results
       run: |
