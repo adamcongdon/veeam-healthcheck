@@ -3,9 +3,7 @@ name: Release Workflow
 on:
     push:
         branches: [ "master", "dev" ]
-    pull_request:
-        # The branches below must be a subset of the branches above
-        branches: [ "master" ]
+
 
 jobs:
   build:
@@ -32,10 +30,10 @@ jobs:
       run: dotnet test VeeamHealthCheck.csproj --no-restore --verbosity normal
       working-directory: vHC/HC_Reporting
 
-    - name: Code scan
-      uses: github/codeql-action/init@v1
-      with:
-        languages: csharp
+    # - name: Code scan
+    #   uses: github/codeql-action/init@v1
+    #   with:
+    #     languages: csharp
 
     # - name: Perform CodeQL Analysis
     #   uses: github/codeql-action/analyze@v2
