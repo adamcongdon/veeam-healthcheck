@@ -84,7 +84,7 @@ jobs:
         
         # Upload the file using the obtained URL
         $form = @{
-          file = Get-Item $file
+          file = Get-Item -Path $file
         }
         $response = Invoke-WebRequest -Uri $uploadUrl -Method Post -Form $form -Headers @{ "x-apikey" = $apiKey } -ContentType "multipart/form-data"
         
