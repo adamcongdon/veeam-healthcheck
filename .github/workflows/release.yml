@@ -57,7 +57,7 @@ jobs:
         gci D:\a\publish
         echo "::set-output name=version::$version"
         $hash = Get-FileHash -Path D:\a\publish\VeeamHealthCheck-$version.zip -Algorithm SHA256
-        $hash | Out-File -FilePath "D:\a\publish\VeeamHealthCheck-$version.zip.sha256"
+        echo "::set-output name=sha256::$($hash.Hash)"
         $hash
 
       shell: pwsh
@@ -121,12 +121,21 @@ jobs:
         asset_name: VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip
         asset_content_type: application/zip
     
-    - name: Upload Release Asset (SHA256)
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip.sha256
-        asset_name: VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip.sha256
-        asset_content_type: text/plain
+    # - name: Upload Release Asset (SHA256)
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip.sha256
+    #     asset_name: VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip.sha256
+    #     asset_content_type: text/plain
+
+    - name: Update GitHub Release with SHA256
+      run: |
+        $version = "${{ steps.zip_files.outputs.version }}"
+        $sha256 = "${{ steps.zip_files.outputs.sha256 }}"
+        $release_id=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases/tags/$version | jq -r '.id')
+        $body="SHA256 Hash: $sha256"
+        curl -s -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -d "{\"body\": \"$body\"}" https://api.github.com/repos/${{ github.repository }}/releases/$release_id
+      shell: pwsh
