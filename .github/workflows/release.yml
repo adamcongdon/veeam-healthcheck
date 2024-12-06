@@ -75,9 +75,17 @@ jobs:
       run: |
         $file = "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
         $apiKey = "${{ secrets.VIRUSTOTAL_API_KEY }}"
-        $response = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/files" -Method Post -Headers @{ "x-apikey" = $apiKey } -InFile $file -ContentType "multipart/form-data"
+        
+        # Get the upload URL
+        $uploadUrlResponse = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/files/upload_url" -Method Get -Headers @{ "x-apikey" = $apiKey }
+        $uploadUrl = $uploadUrlResponse.upload_url
+        
+        # Upload the file using the obtained URL
+        $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -InFile $file -ContentType "multipart/form-data"
+        
         echo "::set-output name=scan_id::$(echo $response.data.id)"
       shell: pwsh
+
     - name: Check VirusTotal Scan Results
       run: |
         $scanId = "${{ steps.virustotal_scan.outputs.scan_id }}"
