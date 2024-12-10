@@ -109,6 +109,12 @@ jobs:
           Write-Host "Failed to parse response content. Error: $_"
           exit 1
         }
+        
+        if ($responseContent.data -eq $null) {
+          Write-Host "Response content data is null."
+          exit 1
+        }
+        
         echo "::set-output name=scan_id::$(echo $responseContent.data.id)"
       shell: pwsh
 
