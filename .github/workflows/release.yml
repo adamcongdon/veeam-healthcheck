@@ -62,74 +62,12 @@ jobs:
 
       shell: pwsh
 
-    - name: Upload to VirusTotal
-      id: virustotal_scan
-      run: |
-        $file = "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
-        $apiKey = "${{ secrets.VIRUSTOTAL_API_KEY }}"
-        
-        # Get the upload URL
-        $uploadUrlResponse = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/files/upload_url" -Method Get -Headers @{ "x-apikey" = $apiKey }
-        Write-Host "Upload URL Response: $uploadUrlResponse"
-        if ($uploadUrlResponse -eq $null) {
-          Write-Host "Failed to get upload URL from VirusTotal."
-          exit 1
-        }
-        $uploadUrl = $uploadUrlResponse.data
-        Write-Host "Upload URL: $uploadUrl"
-        if ([string]::IsNullOrEmpty($uploadUrl)) {
-          Write-Host "Upload URL is null or empty."
-          exit 1
-        }
-        
-        # Upload the file using the obtained URL
-        $fileStream = [System.IO.File]::OpenRead($file)
-        $form = New-Object System.Net.Http.MultipartFormDataContent
-        $fileContent = New-Object System.Net.Http.StreamContent($fileStream)
-        $fileContent.Headers.ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::Parse("form-data; name=`"file`"; filename=`"$($fileStream.Name)`"")
-        $form.Add($fileContent, "file")
-        
-        try {
-          $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -Body $form -Headers @{ "x-apikey" = $apiKey } -ContentType "multipart/form-data"
-          Write-Host "Upload Response: $response"
-        } catch {
-          Write-Host "Failed to upload file to VirusTotal. Error: $_"
-          exit 1
-        }
-        
-        if ($response -eq $null) {
-          Write-Host "Upload response is null."
-          exit 1
-        }
-        
-        try {
-          $responseContent = $response.Content | ConvertFrom-Json
-          Write-Host "Response Content: $responseContent"
-        } catch {
-          Write-Host "Failed to parse response content. Error: $_"
-          exit 1
-        }
-        
-        if ($responseContent -eq $null) {
-          Write-Host "Response content is null."
-          exit 1
-        }
-        
-        if ($responseContent.data -eq $null) {
-          Write-Host "Response content data is null."
-          exit 1
-        }
-        
-        echo "::set-output name=scan_id::$(echo $responseContent.data.id)"
-      shell: pwsh
-
-    - name: Check VirusTotal Scan Results
-      run: |
-        $scanId = "${{ steps.virustotal_scan.outputs.scan_id }}"
-        $apiKey = "${{ secrets.VIRUSTOTAL_API_KEY }}"
-        $response = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/analyses/$scanId" -Method Get -Headers @{ "x-apikey" = $apiKey }
-        Write-Host "Scan Results: $($response.data.attributes.stats)"
-      shell: pwsh
+    - name: VirusTotal Scan
+      uses: crazy-max/ghaction-virustotal@v4
+      with:
+          vt_api_key: ${{ secrets.VIRUSTOTAL_API_KEY }}
+          files: |
+           "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
 
     - name: Create Release
       id: create_release
