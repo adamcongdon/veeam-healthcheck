@@ -83,13 +83,11 @@ jobs:
         }
         
         # Upload the file using the obtained URL
+        $fileStream = [System.IO.File]::OpenRead($file)
         $form = @{
-          file = Get-Item -Path $file
+          file = $fileStream
         }
-        $formData = @{
-          file = [System.IO.File]::ReadAllBytes($file)
-        }
-        $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -Form $formData -Headers @{ "x-apikey" = $apiKey } -ContentType "multipart/form-data"
+        $response = Invoke-WebRequest -Uri $uploadUrl -Method Post -Form $form -Headers @{ "x-apikey" = $apiKey } -ContentType "multipart/form-data"
         
         $responseContent = $response.Content | ConvertFrom-Json
         echo "::set-output name=scan_id::$(echo $responseContent.data.id)"
