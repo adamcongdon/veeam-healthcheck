@@ -62,12 +62,26 @@ jobs:
 
       shell: pwsh
 
+    - name: Debug File Path
+      run: |
+        echo "Checking if file exists..."
+        if (Test-Path "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip") {
+          echo "File exists."
+        } else {
+          echo "File does not exist."
+        }
+      shell: pwsh
+
     - name: VirusTotal Scan
       uses: crazy-max/ghaction-virustotal@v4
       with:
-          vt_api_key: ${{ secrets.VIRUSTOTAL_API_KEY }}
-          files: |
-           "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
+        vt_api_key: ${{ secrets.VIRUSTOTAL_API_KEY }}
+        files: "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
+        vt_monitor: false
+        monitor_path: /
+        update_release_body: false
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        request_rate: 0
 
     - name: Create Release
       id: create_release
