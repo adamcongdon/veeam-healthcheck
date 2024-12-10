@@ -110,6 +110,11 @@ jobs:
           exit 1
         }
         
+        if ($responseContent -eq $null) {
+          Write-Host "Response content is null."
+          exit 1
+        }
+        
         if ($responseContent.data -eq $null) {
           Write-Host "Response content data is null."
           exit 1
@@ -146,16 +151,6 @@ jobs:
         asset_path: D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip
         asset_name: VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip
         asset_content_type: application/zip
-    
-    # - name: Upload Release Asset (SHA256)
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip.sha256
-    #     asset_name: VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip.sha256
-    #     asset_content_type: text/plain
 
     - name: Update GitHub Release with SHA256
       run: |
