@@ -76,7 +76,7 @@ jobs:
       uses: crazy-max/ghaction-virustotal@v4
       with:
         vt_api_key: ${{ secrets.VIRUSTOTAL_API_KEY }}
-        files: "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
+        files: "D:\\a\\publish\\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
 
 
     - name: Create Release
