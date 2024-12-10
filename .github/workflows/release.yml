@@ -83,7 +83,6 @@ jobs:
       shell: pwsh
 
     - name: Upload to VirusTotal
-      id: virustotal_scan
       run: |
         $file = "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
         $apiKey = "${{ secrets.VIRUSTOTAL_API_KEY }}"
