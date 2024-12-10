@@ -84,16 +84,31 @@ jobs:
         
         # Upload the file using the obtained URL
         $fileStream = [System.IO.File]::OpenRead($file)
-        $form = @{
-          file = New-Object System.Net.Http.MultipartFormDataContent
-        }
+        $form = New-Object System.Net.Http.MultipartFormDataContent
         $fileContent = New-Object System.Net.Http.StreamContent($fileStream)
         $fileContent.Headers.ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::Parse("form-data; name=`"file`"; filename=`"$($fileStream.Name)`"")
-        $form.file.Add($fileContent)
+        $form.Add($fileContent, "file")
         
-        $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -Body $form.file -Headers @{ "x-apikey" = $apiKey } -ContentType "multipart/form-data"
+        try {
+          $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -Body $form -Headers @{ "x-apikey" = $apiKey } -ContentType "multipart/form-data"
+          Write-Host "Upload Response: $response"
+        } catch {
+          Write-Host "Failed to upload file to VirusTotal. Error: $_"
+          exit 1
+        }
         
-        $responseContent = $response.Content | ConvertFrom-Json
+        if ($response -eq $null) {
+          Write-Host "Upload response is null."
+          exit 1
+        }
+        
+        try {
+          $responseContent = $response.Content | ConvertFrom-Json
+          Write-Host "Response Content: $responseContent"
+        } catch {
+          Write-Host "Failed to parse response content. Error: $_"
+          exit 1
+        }
         echo "::set-output name=scan_id::$(echo $responseContent.data.id)"
       shell: pwsh
 
