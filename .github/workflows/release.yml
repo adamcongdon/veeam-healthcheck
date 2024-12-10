@@ -65,7 +65,8 @@ jobs:
     - name: Scan with VirusTotal
       id: virustotal_scan
       run: |
-        $fileStream = [System.IO.File]::OpenRead("${{ steps.download.outputs.download-path }}")
+        $file = "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
+        $fileStream = [System.IO.File]::OpenRead($file)
         $uploadUrl = "https://www.virustotal.com/api/v3/files"
         $apiKey = "${{ secrets.VIRUSTOTAL_API_KEY }}"
         
@@ -73,7 +74,7 @@ jobs:
           file = New-Object System.Net.Http.MultipartFormDataContent
         }
         $fileContent = New-Object System.Net.Http.StreamContent($fileStream)
-        $fileContent.Headers.ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::Parse("form-data; name=`"file`"; filename=`"$($fileStream.Name)`"")
+        $fileContent.Headers.ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::Parse("form-data; name=`"file`"; filename=`"$(Split-Path $file -Leaf)`"")
         $form.file.Add($fileContent)
         
         $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -Body $form.file -Headers @{ "x-apikey" = $apiKey } -ContentType "multipart/form-data"
