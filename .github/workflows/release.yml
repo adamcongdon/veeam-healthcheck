@@ -62,28 +62,8 @@ jobs:
 
       shell: pwsh
 
-    - name: Scan with VirusTotal
-      id: virustotal_scan
-      run: |
-        $file = "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
-        $fileStream = [System.IO.File]::OpenRead($file)
-        $uploadUrl = "https://www.virustotal.com/api/v3/files"
-        $apiKey = "${{ secrets.VIRUSTOTAL_API_KEY }}"
-        
-        $form = @{
-          file = New-Object System.Net.Http.MultipartFormDataContent
-        }
-        $fileContent = New-Object System.Net.Http.StreamContent($fileStream)
-        $fileContent.Headers.ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::Parse("form-data; name=`"file`"; filename=`"$(Split-Path $file -Leaf)`"")
-        $form.file.Add($fileContent)
-        
-        $response = Invoke-RestMethod -Uri $uploadUrl -Method Post -Body $form.file -Headers @{ "x-apikey" = $apiKey } -ContentType "multipart/form-data"
-        
-        # Access the response directly since Invoke-RestMethod automatically deserializes JSON
-        echo "::set-output name=scan_id::$($response.data.id)"
-      shell: pwsh
-
     - name: Upload to VirusTotal
+      id: virustotal_scan
       run: |
         $file = "D:\a\publish\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
         $apiKey = "${{ secrets.VIRUSTOTAL_API_KEY }}"
