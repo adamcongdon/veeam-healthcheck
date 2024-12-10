@@ -30,12 +30,6 @@ jobs:
       run: dotnet test VeeamHealthCheck.csproj --no-restore --verbosity normal
       working-directory: vHC/HC_Reporting
 
-    - name: VirusTotal Scan
-      uses: crazy-max/ghaction-virustotal@v4
-      with:
-        vt_api_key: ${{ secrets.VIRUSTOTAL_API_KEY }}
-        files: "D:\\a\\veeam-healthcheck\\veeam-healthcheck\\vHC\\HC_Reporting\\bin\\Release\\net8.0-windows7.0\\win-x64\\*"
-
 
 
   release:
@@ -78,7 +72,13 @@ jobs:
         }
       shell: pwsh
 
-
+    - name: VirusTotal Scan
+      uses: crazy-max/ghaction-virustotal@v4
+      with:
+        vt_api_key: ${{ secrets.VIRUSTOTAL_API_KEY }}
+        vt_monitor: true
+        files: "D:\\a\\publish\\VeeamHealthCheck-${{ steps.zip_files.outputs.version }}.zip"
+        
 
 
     - name: Create Release
