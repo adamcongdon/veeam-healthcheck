@@ -8,6 +8,9 @@ jobs:
   virustotal:
     runs-on: ubuntu-latest
     steps:
+      - name: Check event payload
+        run: echo "${{ toJson(github.event) }}"
+        
       - name: VirusTotal Scan
         uses: crazy-max/ghaction-virustotal@v4
         with:
